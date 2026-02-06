@@ -39,14 +39,16 @@ cp -f frps /usr/local/bin/
 chmod +x /usr/local/bin/frps
 mkdir -p /etc/frp
 
-# 6. 写入新版 TOML 配置文件
+# 6. 写入新版 TOML 配置文件 (增加 KCP 支持)
 # 设置默认值
 BIND_PORT=7000
+KCP_PORT=7000  # KCP 通常与 BIND_PORT 共用端口号，但走 UDP 协议
 DASH_PORT=7500
 TOKEN="admin"
 
 cat << TOML > /etc/frp/frps.toml
 bindPort = $BIND_PORT
+kcpBindPort = $KCP_PORT
 auth.token = "$TOKEN"
 
 [webServer]
@@ -79,10 +81,10 @@ systemctl enable frps
 systemctl restart frps
 
 echo "==============================================="
-echo "✅ frps 安装并启动成功！"
+echo "✅ frps 安装并启动成功 (已开启 KCP 支持)！"
 echo "-----------------------------------------------"
 echo "🏠 服务端 IP: $(curl -s ifconfig.me)"
-echo "🔑 绑定端口: $BIND_PORT"
+echo "🔑 绑定端口: $BIND_PORT (TCP/UDP)"
 echo "🛡️ 鉴权 Token: $TOKEN"
 echo "📊 Dashboard: http://$(curl -s ifconfig.me):$DASH_PORT"
 echo "👤 管理账号/密码: admin / admin"
